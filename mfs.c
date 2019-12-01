@@ -44,7 +44,8 @@
 #define BS_VolLab_Offest 71
 #define BS_VolLab_Size 11
 
-struct __attribute__((__packed__))DirectoryEntry{
+struct __attribute__((__packed__))DirectoryEntry
+{
 	char DIR_Name[11];
 	uint8_t DIR_Attr;
 	uint8_t Unused1[8];
@@ -55,7 +56,8 @@ struct __attribute__((__packed__))DirectoryEntry{
 	
 };
 // A linked list node 
-struct  OpenNodes{ 
+struct  OpenNodes
+{ 
 	//open file fpointer
 	//name of file
     FILE *fp2;
@@ -87,7 +89,8 @@ struct OpenNodes* head = NULL;
 
 //assuming this will be what use for read
 // also how we change directories basically
-int16_t nextLb(uint32_t sector){
+int16_t nextLb(uint32_t sector)
+{
 	uint32_t FATAddress = (BPB_BytesPerSec * BPB_RsvdSecCnt) + ( sector *4 );
 	int16_t val;
 	fseek(fp, FATAddress, SEEK_SET);
@@ -105,13 +108,15 @@ int LBAToOffset(int32_t sector)
 void Open( struct OpenNodes **current, char * filename)
 {
 // Return error message if filename is not included with open command
-    if(filename == NULL){
+    if(filename == NULL)
+    {
         printf("File name not included with open command.\n");
         return;
     }
 	// the list is empty so add a new node to the 
  	//head
-    if (head == NULL){
+    if (head == NULL)
+    {
 	    (*current) = (struct OpenNodes*)malloc(sizeof(OpenNodes));
 	    (*current)->fp2=fopen(filename, "r");
 	 	strcpy((*current)->name, filename);
@@ -139,7 +144,8 @@ void Open( struct OpenNodes **current, char * filename)
 }
 
 /**/
-void initial(){
+void initial()
+{
  //BPB_BytesPerSec
   fseek(fp, BPB_BytesPerSec_Offest,SEEK_SET);
   fread(&BPB_BytesPerSec, BPB_BytesPerSec_Size, 1, fp);
@@ -230,7 +236,8 @@ void CD(char *location)
     }
 	
 
-	else{
+	else
+	{
 		// change the  filename	
 		final=strtok(location,".");
         memset( adj, ' ', 12 );
@@ -317,15 +324,15 @@ void Get( char *old_filename, char *adjusted_name)
         info[i]=' ';
     for(i=0; i<16; i++)
 		fread(&dir[i], sizeof(struct DirectoryEntry),1,fp);
-	for(i=0;i<16;i++){
+	for(i=0;i<16;i++)
+	{
         memcpy(name, dir[i].DIR_Name,11);
 		name[11]='\0';
 		if (strcmp(name, adjusted_name)==0)
 	        found =i;
     }
     if (found==20)
-		perror("File not found:");
-	//go in and read and output file
+		perror("File not found:"); //go in and read and output file
     else
     {
         file_size= dir[found].DIR_FileSize;
@@ -468,19 +475,22 @@ void Info(void)
 
 }
 // Prints out the info about a file if found
-void Stat(char* filename){
+void Stat(char* filename)
+{
 	int i,found=20;
 	int numBytes;
 	fseek( fp, RootClusAddress, SEEK_SET);
 	for(i=0; i<16; i++)
 		fread(&dir[i], sizeof(struct DirectoryEntry),1,fp);
 	
-	for(i=0;i<16;i++){	
+	for(i=0;i<16;i++)
+	{	
 		char name[12];
 		memcpy(name, dir[i].DIR_Name,11);
 		name[11]='\0';
 		
-		if (strcmp(name, filename)==0){	
+		if (strcmp(name, filename)==0)
+		{	
 			found =i;
 			numBytes=dir[i].DIR_FileSize;
 		}
@@ -560,23 +570,28 @@ int main()
         free( working_root );
 
     // ls command
-	   if (strcmp(token[0], "ls")==0){
+	   if (strcmp(token[0], "ls")==0)
+	   {
 	       ls();
 	   }
     // Open command
-	   else if (strcmp(token[0], "open")==0){
+	   else if (strcmp(token[0], "open")==0)
+	   {
 	       Open(&head,token[1]);
 	   }
     // Close command
-	   else if (strcmp(token[0], "close")==0){
+	   else if (strcmp(token[0], "close")==0)
+	   {
 	       Close(&head,token[1]);
 	   }
     // Info command
-	   else if (strcmp(token[0], "info")==0){
+	   else if (strcmp(token[0], "info")==0)
+	   {
 	       Info();
 	   }
     // Change directory
-	   else if (strcmp(token[0], "cd")==0){
+	   else if (strcmp(token[0], "cd")==0)
+	   {
 	   		
 	       CD(token[1]);
 	   }
